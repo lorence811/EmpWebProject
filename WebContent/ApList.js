@@ -2,70 +2,52 @@
  *
  */
 var refresh= function(){
-	var url = 'http://localhost:8090/javaTraining/EmployeeList.html';
+	var url = 'http://localhost:8090/javaTraining/ApList.html';
 	// 画面遷移
 	location.href=url;
 }
 
 var addnew = function(){
 
-	var url = 'http://localhost:8090/javaTraining/EmpAddNew.html';
+	var url = 'http://localhost:8090/javaTraining/ApAddNew.html';
+	// 画面遷移
+	location.href=url;
+}
+var toEmpList = function(){
+	var url = 'http://localhost:8090/javaTraining/EmployeeList.html';
 	// 画面遷移
 	location.href=url;
 }
 
-var Search = function(){
-	var url = 'http://localhost:8090/javaTraining/EmpSearch.html';
-	// 画面遷移
-	location.href=url;
-}
-var toAp = function(){
-	var url = 'http://localhost:8090/javaTraining/ApList.html';
-	// 画面遷移
-	location.href=url;
-}
-var getEmpInfo = function(){
-	var inputEmpId = localStorage.getItem('inputEmpId');
-	var inputEmpName = localStorage.getItem('inputEmpName');
-	var inputEmpApId = localStorage.getItem('inputEmpApId');
-	localStorage.removeItem('inputEmpId');
-	localStorage.removeItem('inputEmpName');
-	localStorage.removeItem('inputEmpApId');
-	var requestQuery = {
-			EmpId : inputEmpId,
-			EmpName : inputEmpName,
-			EmpApId : inputEmpApId,
-	}
-	console.log('requestQuery',requestQuery);
+var getApInfo = function(){
 
 	$.ajax({
 		type:'GET',
 		dataType:'json',
-		url:'/javaTraining/EmpGetInfoServlet',
-		data : requestQuery,
+		url:'/javaTraining/ApGetInfoServlet',
 		success : function(json) {
 			console.log('返却値', json);
 			var tableElemnt = '';
 			if(json.length > 0){
 				tableElemnt +='<tr>';
-				tableElemnt +='<th>社員ID</th>';
-				tableElemnt +='<th>名前</th>';
+				tableElemnt +='<th>ID</th>';
+				tableElemnt +='<th>部署名</th>';
 				tableElemnt +='</tr>';
 
 				for (var i=0; i < json.length; i++) {
-					var Emp = json[i];
+					var Ap = json[i];
 					tableElemnt += '<tr>';
-					tableElemnt += '<td class=empID>'+Emp.empId+'</td>';
-					tableElemnt += '<td class=empName>'+Emp.empName+'</td>';
-					tableElemnt += '<td><a id=changebutton href="http://localhost:8090/javaTraining/EmpChange.html?q='+Emp.empId+'">編集</a></td>';
-					tableElemnt += '<td><button class=delete type="submit" name="delete" value="'+Emp.empId+'">削除</button></td>';
+					tableElemnt += '<td class=empID>'+Ap.apId+'</td>';
+					tableElemnt += '<td class=empName>'+Ap.apName+'</td>';
+					tableElemnt += '<td class=changebuttoncontainer><a class=changebutton href="http://localhost:8090/javaTraining/ApChange.html?q='+Ap.apId+'">編集</a></td>';
+					tableElemnt += '<td class=changebuttoncontainer><button class=delete type="submit" name="delete" value="'+Ap.apId+'">削除</button></td>';
 					tableElemnt += '</tr>';
 					}
 				$('#table').html(tableElemnt);
 			}else if(json.length == 0){
 				$('#nullcontainer').html('登録している社員がいません。');
 			}
-			$('.delete').click(deleteEmp);
+			$('.delete').click(deleteAp);
 
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -76,10 +58,10 @@ var getEmpInfo = function(){
 	});
 }
 
-var deleteEmp = function(){
-	var inputEmpId = document.activeElement.value;
+var deleteAp = function(){
+	var inputApId = document.activeElement.value;
 	var requestQuery = {
-			EmpId : inputEmpId,
+			ApId : inputApId,
 	}
 	console.log('requestQuery',requestQuery);
 
@@ -87,7 +69,7 @@ var deleteEmp = function(){
 	$.ajax({
 		type : 'POST',
 		dataType:'json',
-		url : '/javaTraining/EmpGetInfoServlet',
+		url : '/javaTraining/ApGetInfoServlet',
 		data : requestQuery,
 		success : function(json) {
 			// サーバーとの通信に成功した時の処理
@@ -106,8 +88,6 @@ var deleteEmp = function(){
 $(document).ready(function() {
 	// ログインボタンを押したときのイベント
 	$('.addnew').click(addnew);
-	$('#search').click(Search);
-	$('#refresh').click(refresh);
-	$('#toAp').click(toAp);
-	getEmpInfo();
+	getApInfo();
+	$('.toEmpList').click(toEmpList);
 });

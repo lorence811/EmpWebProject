@@ -18,16 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Servlet implementation class EmpGetInfoServlet
+ * Servlet implementation class ApGetInfoServlet
  */
-@WebServlet("/EmpGetInfoServlet")
-public class EmpGetInfoServlet extends HttpServlet {
+@WebServlet("/ApGetInfoServlet")
+public class ApGetInfoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EmpGetInfoServlet() {
+    public ApGetInfoServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,94 +36,15 @@ public class EmpGetInfoServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String EmpId= request.getParameter("EmpId");
-
-		String EmpName = request.getParameter("EmpName");
-
-		String EmpApId = request.getParameter("EmpApId");
-
-		System.out.println("ID："+EmpId+"name:"+EmpName+"ApID:"+EmpApId);
-
-		String sql="";
-
-		if(EmpId.equals("")&&EmpName.equals("")&&EmpApId.equals("")){
-			sql ="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpName.equals("")&&EmpApId.equals("")){
-			sql ="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpId.equals("")&&EmpName.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPAPID = '"+EmpApId+"' \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpId.equals("")&&EmpApId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n";
-		}else if(EmpId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					"and EMPApId = '"+EmpApId+"' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n";
-		}else if(EmpName.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"and EMPApId = '"+EmpApId+"' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n" ;
-		}else if(EmpApId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n" ;
-		}
 
 
+		String sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"APINFO \n" +
+				" \n" +
+				"order by \n" +
+				"EMPAPID \n";
 
 		// JDBCドライバの準備
 		try {
@@ -143,7 +64,7 @@ public class EmpGetInfoServlet extends HttpServlet {
 
 
 
-		List<Emp> EmpList = new ArrayList<>();
+		List<Ap> ApList = new ArrayList<>();
 
 		try (
 				// データベースへ接続します
@@ -158,10 +79,10 @@ public class EmpGetInfoServlet extends HttpServlet {
 
 			// SQL実行結果を商品リストに追加していく。
 			while (rs1.next()) {
-				Emp emp = new Emp();
-				emp.setEmpName(rs1.getString("EMPNAME"));
-				emp.setEmpId(rs1.getString("EMPID"));
-				EmpList.add(emp);
+				Ap ap = new Ap();
+				ap.setApId(rs1.getString("EMPAPID"));
+				ap.setApName(rs1.getString("APNAME"));
+				ApList.add(ap);
 
 			}
 		} catch (Exception e) {
@@ -170,7 +91,7 @@ public class EmpGetInfoServlet extends HttpServlet {
 		// アクセスした人に応答するためのJSONを用意する
 		PrintWriter pw = response.getWriter();
 		// JSONで出力する
-		pw.append(new ObjectMapper().writeValueAsString(EmpList));
+		pw.append(new ObjectMapper().writeValueAsString(ApList));
 
 	}
 
@@ -178,7 +99,7 @@ public class EmpGetInfoServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String EmpId= request.getParameter("EmpId");
+		String ApId= request.getParameter("ApId");
 		// JDBCドライバの準備
 		try {
 			// JDBCドライバのロード
@@ -194,8 +115,7 @@ public class EmpGetInfoServlet extends HttpServlet {
 		String pass = "webapp";
 
 		// 実行するSQL文
-		String sql = "DELETE FROM EMPINFO \n" +
-				"WHERE EMPID = '"+EmpId+"' \n" ;
+		String sql = "delete from APINFO where EMPAPID = '"+ApId+"'";
 
 		// エラーが発生するかもしれない処理はtry-catchで囲みます
 		// この場合はDBサーバへの接続に失敗する可能性があります

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>社員検索ページ</title>
+<link rel="stylesheet" href="./Empchange.css" type="text/css">
+<script type="text/javascript" src="jquery-1.10.2.js"></script>
+<script type="text/javascript" src="./EmpSearch.js"></script>
+</head>
+<body>
+	<div>
+		<h1>条件を指定して社員情報を検索します。</h1>
+	</div>
+	<div id = form>
+		<div class = input>
+			<p>所属部署：<p>
+			<select id=EmpApId name="EmpApId">
+				<option value="" selected>部署を選択</option>
+			</select>
+		</div>
+		<div class = input>
+			<p>社員ID:<p>
+			<input type="text"id=EmpId value="">
+		</div>
+		<div class = input>
+			<p>名前に含む文字:<p>
+			<input type="text"id=EmpName value="">
+		</div>
+		<div id= buttonContainer>
+			<button id=search type="button">検索</button>
+		</div>
+	</div>
+</body>
+</html>

@@ -97,10 +97,33 @@ var getEmp = function(){
 		}
 	});
 }
+var getApInfo = function(){
+
+	$.ajax({
+		type:'GET',
+		dataType:'json',
+		url:'/javaTraining/ApGetInfoServlet',
+		success : function(json) {
+			console.log('AP返却値', json);
+			var tableElemnt = '';
+			for (var i=0; i < json.length; i++) {
+				var Ap = json[i];
+				tableElemnt += '<option value="'+Ap.apId+'">'+Ap.apName+'</option>';
+			}
+			$('#EmpApId').append(tableElemnt);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert('データは通信に失敗しました');
+			console.log(errorThrown)
+		}
+	});
+}
 
 $(document).ready(function() {
 	// ログインボタンを押したときのイベント
 	$('#cancel').click(cancel);
 	$('#commit').click(registEmp);
+	getApInfo();
 	getEmp();
+
 });
