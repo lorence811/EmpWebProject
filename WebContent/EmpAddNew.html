@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>社員データの修正・追加</title>
+<link rel="stylesheet" href="./Empchange.css" type="text/css">
+<script type="text/javascript" src="jquery-1.10.2.js"></script>
+<script type="text/javascript" src="./EmpAddNew.js"></script>
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+</head>
+<body>
+	<div>
+		<h1>社員データの修正・追加</h1>
+	</div>
+	<div id = form>
+		<div class = input>
+			<p>社員ID:<p>
+			<input type="text"id=EmpId value="EMP">
+		</div>
+		<div class = input>
+			<p>名前:<p>
+			<input type="text"id=EmpName value="">
+		</div>
+		<div class = input>
+			<p>年齢:<p>
+			<input type="text"id=EmpAge  value="">
+		</div>
+		<div class = input>
+			<p>性別：<p>
+			<form id="EmpGender">
+				<input  name="EmpGender"type="radio" value="男"> 男性
+				<input  name="EmpGender"type="radio" value="女"> 女性
+			</form>
+		</div>
+		<div class = input>
+			住所：　〒
+			<input id=EmpAddressID type="text" name="zip11" size="10" maxlength="8" onKeyUp="AjaxZip3.zip2addr(this,'','addr11','addr11');">
+			<!-- ▼住所入力フィールド(都道府県+以降の住所) -->
+			<input id=EmpAddress type="text" name="addr11" size="60">
+		</div>
+		<div class = input>
+			<p>所属：<p>
+			<select id=EmpApId name="EmpApId">
+				<option value="D01">総務部</option>
+				<option value="D02">営業部</option>
+				<option value="D03">開発部</option>
+			</select>
+		</div>
+	</div>
+	<div id=buttons>
+		<button id=commit type="button">設定</button>
+		<button id=cancel type="button">キャンセル</button>
+	</div>
+</body>
+</html>

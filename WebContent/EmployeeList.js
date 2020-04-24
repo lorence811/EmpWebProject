@@ -9,7 +9,7 @@ var refresh= function(){
 
 var addnew = function(){
 
-	var url = 'http://localhost:8090/javaTraining/EmpChange.html';
+	var url = 'http://localhost:8090/javaTraining/EmpAddNew.html';
 	// 画面遷移
 	location.href=url;
 }
