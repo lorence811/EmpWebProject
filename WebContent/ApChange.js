@@ -11,7 +11,7 @@ var success = function(){
 	location.href=url;
 }
 var cancel = function(){
-	var url = 'http://localhost:8090/javaTraining/ApChange.html?q='+parameter;
+	var url = 'http://localhost:8090/javaTraining/ApList.html'
 	// 画面遷移
 	location.href=url;
 }

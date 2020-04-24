@@ -1,6 +1,11 @@
 /**
  *
  */
+var cancel = function(){
+	var url = 'http://localhost:8090/javaTraining/EmployeeList.html'
+	// 画面遷移
+	location.href=url;
+}
 var Search = function(){
 
 var inputEmpId = $('#EmpId').val();
@@ -43,4 +48,5 @@ var getApInfo = function(){
 $(document).ready(function() {
 	$('#search').click(Search);
 	getApInfo();
+	$('#cancel').click(cancel);
 });
