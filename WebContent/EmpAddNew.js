@@ -1,9 +1,18 @@
 /**
  *
  */
-var parameter  = location.search;
-parameter = decodeURIComponent( parameter );
-parameter = parameter.split('=')[1];
+var setNewEmpId = function(){
+	var LastEmpId = localStorage.getItem('LastEmpId');
+	localStorage.removeItem('LastEmpId');
+	var Id = LastEmpId.substring(3);
+	var Id_int = Number(Id);
+	var Id_new = Id_int +1;
+	var ret = ( '0000' + Id_new ).slice( -4 );
+	var NewEmpId = 'EMP'+ret;
+	console.log(NewEmpId);
+	document.getElementById('EmpId').value = NewEmpId;
+}
+
 
 var success = function(){
 	var url = 'http://localhost:8090/javaTraining/RegistSuccess.html';
@@ -87,4 +96,5 @@ $(document).ready(function() {
 	$('#cancel').click(cancel);
 	$('#commit').click(registEmp);
 	getApInfo();
+	setNewEmpId();
 });

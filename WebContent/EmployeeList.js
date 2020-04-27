@@ -29,6 +29,7 @@ var Change = function(){
 	var url = 'http://localhost:8090/javaTraining/EmpChange.html?q='+inputEmpId;
 	location.href=url;
 }
+var LastEmpId="";
 var getEmpInfo = function(){
 	var inputEmpId = localStorage.getItem('inputEmpId');
 	var inputEmpName = localStorage.getItem('inputEmpName');
@@ -57,6 +58,11 @@ var getEmpInfo = function(){
 				tableElemnt +='<th>名前</th>';
 				tableElemnt +='</tr>';
 
+				//最後の社員のIdを取り出し、ローカルストレージに保存
+				var EmpLast = json[json.length - 1];
+				LastEmpId = EmpLast.empId;
+				localStorage.setItem('LastEmpId',LastEmpId);
+
 				for (var i=0; i < json.length; i++) {
 					var Emp = json[i];
 					tableElemnt += '<tr>';
@@ -72,6 +78,7 @@ var getEmpInfo = function(){
 			}
 			$('.delete').click(deleteEmp);
 			$('.change').click(Change);
+
 
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
