@@ -24,6 +24,11 @@ var toAp = function(){
 	// 画面遷移
 	location.href=url;
 }
+var Change = function(){
+	var inputEmpId = document.activeElement.value;
+	var url = 'http://localhost:8090/javaTraining/EmpChange.html?q='+inputEmpId;
+	location.href=url;
+}
 var getEmpInfo = function(){
 	var inputEmpId = localStorage.getItem('inputEmpId');
 	var inputEmpName = localStorage.getItem('inputEmpName');
@@ -57,7 +62,7 @@ var getEmpInfo = function(){
 					tableElemnt += '<tr>';
 					tableElemnt += '<td class=empID>'+Emp.empId+'</td>';
 					tableElemnt += '<td class=empName>'+Emp.empName+'</td>';
-					tableElemnt += '<td><a id=changebutton href="http://localhost:8090/javaTraining/EmpChange.html?q='+Emp.empId+'">編集</a></td>';
+					tableElemnt += '<td><button class=change type="submit" name="delete" value="'+Emp.empId+'">編集</button></td>';
 					tableElemnt += '<td><button class=delete type="submit" name="delete" value="'+Emp.empId+'">削除</button></td>';
 					tableElemnt += '</tr>';
 					}
@@ -66,6 +71,7 @@ var getEmpInfo = function(){
 				$('#nullcontainer').html('登録している社員がいません。');
 			}
 			$('.delete').click(deleteEmp);
+			$('.change').click(Change);
 
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
