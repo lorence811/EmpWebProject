@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,109 +43,23 @@ public class EmpGetInfoServlet extends HttpServlet {
 
 		String EmpApId = request.getParameter("EmpApId");
 
-		System.out.println("ID："+EmpId+"name:"+EmpName+"ApID:"+EmpApId);
+		String sql = creatSelectSql(EmpId, EmpName, EmpApId);
 
-		String sql="";
+		List<Emp> EmpList = new ArrayList<>();
 
-		if(EmpId.equals("")&&EmpName.equals("")&&EmpApId.equals("")){
-			sql ="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpName.equals("")&&EmpApId.equals("")){
-			sql ="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpId.equals("")&&EmpName.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPAPID = '"+EmpApId+"' \n" +
-					"order by  \n" +
-					"EMPINFO.EMPID \n";
-		}else if(EmpId.equals("")&&EmpApId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n";
-		}else if(EmpId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					"and EMPApId = '"+EmpApId+"' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n";
-		}else if(EmpName.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"and EMPApId = '"+EmpApId+"' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n" ;
-		}else if(EmpApId.equals("")){
-			sql="select \n" +
-					"* \n" +
-					"from \n" +
-					"EMPINFO \n" +
-					" \n" +
-					"where 1=1 \n" +
-					"and EMPID = '"+EmpId+"' \n" +
-					"and EMPNAME like '%"+EmpName+"%' \n" +
-					" \n" +
-					"order by \n" +
-					"EMPID \n" ;
-		}
+		getEmpInfoFromDB(sql, EmpList);
+		// アクセスした人に応答するためのJSONを用意する
+		PrintWriter pw = response.getWriter();
+		// JSONで出力する
+		pw.append(new ObjectMapper().writeValueAsString(EmpList));
+	}
 
-
-
-		// JDBCドライバの準備
-		try {
-
-		    // JDBCドライバのロード
-		    Class.forName("oracle.jdbc.driver.OracleDriver");
-
-		} catch (ClassNotFoundException e) {
-		    // ドライバが設定されていない場合はエラーになります
-		    throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
-		}
-
+	private void getEmpInfoFromDB(String sql, List<Emp> EmpList) {
+		connectToDB();
 		// データベースにアクセスするために、データベースのURLとユーザ名とパスワードを指定
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		String user = "webapp";
 		String pass = "webapp";
-
-
-
-		List<Emp> EmpList = new ArrayList<>();
-
 		try (
 				// データベースへ接続します
 				Connection con = DriverManager.getConnection(url, user, pass);
@@ -157,21 +72,156 @@ public class EmpGetInfoServlet extends HttpServlet {
 			// SQL実行後の処理内容
 
 			// SQL実行結果を商品リストに追加していく。
-			while (rs1.next()) {
-				Emp emp = new Emp();
-				emp.setEmpName(rs1.getString("EMPNAME"));
-				emp.setEmpId(rs1.getString("EMPID"));
-				EmpList.add(emp);
-
-			}
+			putEmpToList(EmpList, rs1);
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
 		}
-		// アクセスした人に応答するためのJSONを用意する
-		PrintWriter pw = response.getWriter();
-		// JSONで出力する
-		pw.append(new ObjectMapper().writeValueAsString(EmpList));
+	}
 
+	private void putEmpToList(List<Emp> EmpList, ResultSet rs1) throws SQLException {
+		while (rs1.next()) {
+			Emp emp = new Emp();
+			emp.setEmpName(rs1.getString("EMPNAME"));
+			emp.setEmpId(rs1.getString("EMPID"));
+			EmpList.add(emp);
+		}
+	}
+
+	private void connectToDB() {
+		// JDBCドライバの準備
+		try {
+
+		    // JDBCドライバのロード
+		    Class.forName("oracle.jdbc.driver.OracleDriver");
+
+		} catch (ClassNotFoundException e) {
+		    // ドライバが設定されていない場合はエラーになります
+		    throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
+		}
+	}
+
+	private String creatSelectSql(String EmpId, String EmpName, String EmpApId) {
+		String sql="";
+
+		if(EmpId.equals("")&&EmpName.equals("")&&EmpApId.equals("")){
+			sql = creatSelectSqlByAll();
+		}else if(EmpName.equals("")&&EmpApId.equals("")){
+			sql = creatSelectSqlByEmpId(EmpId);
+		}else if(EmpId.equals("")&&EmpName.equals("")){
+			sql = creatSelectSqlByEmApId(EmpApId);
+		}else if(EmpId.equals("")&&EmpApId.equals("")){
+			sql = creatSelectSqlByEmpName(EmpName);
+		}else if(EmpId.equals("")){
+			sql = creatSelectSqlByEmpNameAndApId(EmpName, EmpApId);
+		}else if(EmpName.equals("")){
+			sql = creatSelectSqlByEmpIdAndEmpApId(EmpId, EmpApId);
+		}else if(EmpApId.equals("")){
+			sql = creatSelectSqlByEmpIdAndEmpName(EmpId, EmpName);
+		}
+		return sql;
+	}
+
+	private String creatSelectSqlByEmpIdAndEmpName(String EmpId, String EmpName) {
+		String sql;
+		sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPID = '"+EmpId+"' \n" +
+				"and EMPNAME like '%"+EmpName+"%' \n" +
+				" \n" +
+				"order by \n" +
+				"EMPID \n" ;
+		return sql;
+	}
+
+	private String creatSelectSqlByEmpIdAndEmpApId(String EmpId, String EmpApId) {
+		String sql;
+		sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPID = '"+EmpId+"' \n" +
+				"and EMPApId = '"+EmpApId+"' \n" +
+				" \n" +
+				"order by \n" +
+				"EMPID \n" ;
+		return sql;
+	}
+
+	private String creatSelectSqlByEmpNameAndApId(String EmpName, String EmpApId) {
+		String sql;
+		sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPNAME like '%"+EmpName+"%' \n" +
+				"and EMPApId = '"+EmpApId+"' \n" +
+				" \n" +
+				"order by \n" +
+				"EMPID \n";
+		return sql;
+	}
+
+	private String creatSelectSqlByEmpName(String EmpName) {
+		String sql;
+		sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPNAME like '%"+EmpName+"%' \n" +
+				" \n" +
+				"order by \n" +
+				"EMPID \n";
+		return sql;
+	}
+
+	private String creatSelectSqlByEmApId(String EmpApId) {
+		String sql;
+		sql="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPAPID = '"+EmpApId+"' \n" +
+				"order by  \n" +
+				"EMPINFO.EMPID \n";
+		return sql;
+	}
+
+	private String creatSelectSqlByEmpId(String EmpId) {
+		String sql;
+		sql ="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where 1=1 \n" +
+				"and EMPID = '"+EmpId+"' \n" +
+				"order by  \n" +
+				"EMPINFO.EMPID \n";
+		return sql;
+	}
+
+	private String creatSelectSqlByAll() {
+		String sql;
+		sql ="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"order by  \n" +
+				"EMPINFO.EMPID \n";
+		return sql;
 	}
 
 	/**
@@ -179,26 +229,22 @@ public class EmpGetInfoServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String EmpId= request.getParameter("EmpId");
-		// JDBCドライバの準備
-		try {
-			// JDBCドライバのロード
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-		} catch (ClassNotFoundException e) {
-			// ドライバが設定されていない場合はエラーになります
-			throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
-		}
-
+		connectToDB();
+		String sql = creatDeleteSql(EmpId);
 		// データベースにアクセスするために、データベースのURLとユーザ名とパスワードを指定
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		String user = "webapp";
 		String pass = "webapp";
 
-		// 実行するSQL文
-		String sql = "DELETE FROM EMPINFO \n" +
-				"WHERE EMPID = '"+EmpId+"' \n" ;
+		deleteEmp(sql, url, user, pass);
 
-		// エラーが発生するかもしれない処理はtry-catchで囲みます
-		// この場合はDBサーバへの接続に失敗する可能性があります
+		// アクセスした人に応答するためのJSONを用意する
+		PrintWriter pw = response.getWriter();
+		// JSONで出力する
+		pw.append(new ObjectMapper().writeValueAsString("ok"));
+	}
+
+	private void deleteEmp(String sql, String url, String user, String pass) {
 		try (
 				// データベースへ接続します
 				Connection con = DriverManager.getConnection(url, user, pass);
@@ -211,11 +257,13 @@ public class EmpGetInfoServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
 		}
+	}
 
-		// アクセスした人に応答するためのJSONを用意する
-		PrintWriter pw = response.getWriter();
-		// JSONで出力する
-		pw.append(new ObjectMapper().writeValueAsString("ok"));
+	private String creatDeleteSql(String EmpId) {
+		// 実行するSQL文
+		String sql = "DELETE FROM EMPINFO \n" +
+				"WHERE EMPID = '"+EmpId+"' \n" ;
+		return sql;
 	}
 
 }

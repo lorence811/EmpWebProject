@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.servlet.ServletException;
@@ -36,32 +37,20 @@ public class EmpchangeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String EmpId= request.getParameter("EmpId");
+		String sql = creatSelectSqlByEmpId(EmpId);
+		Emp emp = new Emp();
+		connectToDB();
+		getEmpInFo(sql, emp);
+		// アクセスした人に応答するためのJSONを用意する
+		PrintWriter pw = response.getWriter();
+		// JSONで出力する
+		pw.append(new ObjectMapper().writeValueAsString(emp));
+	}
 
-		// JDBCドライバの準備
-		try {
-
-		    // JDBCドライバのロード
-		    Class.forName("oracle.jdbc.driver.OracleDriver");
-
-		} catch (ClassNotFoundException e) {
-		    // ドライバが設定されていない場合はエラーになります
-		    throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
-		}
-
-		// データベースにアクセスするために、データベースのURLとユーザ名とパスワードを指定
+	private void getEmpInFo(String sql, Emp emp) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		String user = "webapp";
 		String pass = "webapp";
-
-		String sql ="select \n" +
-				"* \n" +
-				"from \n" +
-				"EMPINFO \n" +
-				" \n" +
-				"where \n" +
-				"EMPID='"+EmpId+"' \n";
-		Emp emp = new Emp();
-
 		try (
 				// データベースへ接続します
 				Connection con = DriverManager.getConnection(url, user, pass);
@@ -74,23 +63,45 @@ public class EmpchangeServlet extends HttpServlet {
 			// SQL実行後の処理内容
 
 			// SQL実行結果を商品リストに追加していく。
-			if (rs1.next()) {
-
-				emp.setEmpName(rs1.getString("EMPNAME"));
-				emp.setEmpId(rs1.getString("EMPID"));
-				emp.setEmpAge(rs1.getInt("EMPAGE"));
-				emp.setEmpAddress(rs1.getString("EMPADDRESS"));
-				emp.setEmpApId(rs1.getString("EMPAPID"));
-				emp.setEmpGender(rs1.getString("EMPGENDER"));
-
-			}
+			getEmpInfoFromDB(emp, rs1);
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
 		}
-		// アクセスした人に応答するためのJSONを用意する
-		PrintWriter pw = response.getWriter();
-		// JSONで出力する
-		pw.append(new ObjectMapper().writeValueAsString(emp));
+	}
+
+	private void getEmpInfoFromDB(Emp emp, ResultSet rs1) throws SQLException {
+		if (rs1.next()) {
+			emp.setEmpName(rs1.getString("EMPNAME"));
+			emp.setEmpId(rs1.getString("EMPID"));
+			emp.setEmpAge(rs1.getInt("EMPAGE"));
+			emp.setEmpAddress(rs1.getString("EMPADDRESS"));
+			emp.setEmpApId(rs1.getString("EMPAPID"));
+			emp.setEmpGender(rs1.getString("EMPGENDER"));
+		}
+	}
+
+	private void connectToDB() {
+		// JDBCドライバの準備
+		try {
+
+		    // JDBCドライバのロード
+		    Class.forName("oracle.jdbc.driver.OracleDriver");
+
+		} catch (ClassNotFoundException e) {
+		    // ドライバが設定されていない場合はエラーになります
+		    throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
+		}
+	}
+
+	private String creatSelectSqlByEmpId(String EmpId) {
+		String sql ="select \n" +
+				"* \n" +
+				"from \n" +
+				"EMPINFO \n" +
+				" \n" +
+				"where \n" +
+				"EMPID='"+EmpId+"' \n";
+		return sql;
 	}
 
 	/**
@@ -110,50 +121,51 @@ public class EmpchangeServlet extends HttpServlet {
 
 		String EmpApId = request.getParameter("EmpApId");
 
-		// JDBCドライバの準備
-			try {
-				// JDBCドライバのロード
-				Class.forName("oracle.jdbc.driver.OracleDriver");
-			} catch (ClassNotFoundException e) {
-				// ドライバが設定されていない場合はエラーになります
-				throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
-			}
+		String sql = creatUpdateSql(EmpId, EmpName, EmpAge, EmpGender, EmpAddress, EmpApId);
 
-			// データベースにアクセスするために、データベースのURLとユーザ名とパスワードを指定
-			String url = "jdbc:oracle:thin:@localhost:1521:XE";
-			String user = "webapp";
-			String pass = "webapp";
+		connectToDB();
 
-			// 実行するSQL文
-			String sql ="update EMPINFO \n" +
-					" \n" +
-					"set EMPAGE='"+EmpAge+"', \n" +
-					"	EMPGENDER='"+EmpGender+"', \n" +
-					"	EMPADDRESS='"+EmpAddress+"', \n" +
-					"	EMPAPID='"+EmpApId+"', \n" +
-					"	EMPNAME='"+EmpName+"' \n" +
-					" \n" +
-					"where EMPID='"+EmpId+"'";
+		doUpdateBySql(sql);
 
-			// エラーが発生するかもしれない処理はtry-catchで囲みます
-			// この場合はDBサーバへの接続に失敗する可能性があります
-			try (
-					// データベースへ接続します
-					Connection con = DriverManager.getConnection(url, user, pass);
-					// SQLの命令文を実行するための準備をおこないます
-					Statement stmt = con.createStatement();
-				) {
-				// SQLの命令文を実行し、その件数をint型のresultCountに代入します
-				int resultCount = stmt.executeUpdate(sql);
+		// アクセスした人に応答するためのJSONを用意する
+		PrintWriter pw = response.getWriter();
+		// JSONで出力する
+		pw.append(new ObjectMapper().writeValueAsString("ok"));
+	}
 
-			} catch (Exception e) {
-				throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
-			}
+	private void doUpdateBySql(String sql) {
+		String url = "jdbc:oracle:thin:@localhost:1521:XE";
+		String user = "webapp";
+		String pass = "webapp";
+		// エラーが発生するかもしれない処理はtry-catchで囲みます
+		// この場合はDBサーバへの接続に失敗する可能性があります
+		try (
+				// データベースへ接続します
+				Connection con = DriverManager.getConnection(url, user, pass);
+				// SQLの命令文を実行するための準備をおこないます
+				Statement stmt = con.createStatement();
+			) {
+			// SQLの命令文を実行し、その件数をint型のresultCountに代入します
+			int resultCount = stmt.executeUpdate(sql);
 
-			// アクセスした人に応答するためのJSONを用意する
-			PrintWriter pw = response.getWriter();
-			// JSONで出力する
-			pw.append(new ObjectMapper().writeValueAsString("ok"));
+		} catch (Exception e) {
+			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
 		}
+	}
+
+	private String creatUpdateSql(String EmpId, String EmpName, String EmpAge, String EmpGender, String EmpAddress,
+			String EmpApId) {
+		// 実行するSQL文
+		String sql ="update EMPINFO \n" +
+				" \n" +
+				"set EMPAGE='"+EmpAge+"', \n" +
+				"	EMPGENDER='"+EmpGender+"', \n" +
+				"	EMPADDRESS='"+EmpAddress+"', \n" +
+				"	EMPAPID='"+EmpApId+"', \n" +
+				"	EMPNAME='"+EmpName+"' \n" +
+				" \n" +
+				"where EMPID='"+EmpId+"'";
+		return sql;
+	}
 
 }
