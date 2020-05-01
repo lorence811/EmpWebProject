@@ -116,11 +116,41 @@ var deleteEmp = function(){
 		}
 	});
 }
+var load=function(){
+
+	$.ajax({
+		type : 'GET',
+		dataType:'json',
+		url : '/javaTraining/LoginCertificationServlet',
+		success : function(json) {
+			if(json.result === "true"){
+				$('#loginCert').html(json.EmpName+"さん、ようこそ。");
+			}else{
+				var tableElemnt = '';
+				tableElemnt += '<h1>ログインしてください。</h1>';
+				tableElemnt += '<a href="http://localhost:8090/javaTraining/Login.html" target="_blank">ログイン画面へ</a>';
+				$('#body').html(tableElemnt);
+			}
+		},
+		error:function(XMLHttpRequest, textStatus, errorThrown){
+			// サーバーとの通信に失敗した時の処理
+			alert('データベースへの更新に失敗しました。');
+			console.log(errorThrown)
+		}
+	});
+}
+var logout=function(){
+	var loginrequest="logout";
+	var url = 'http://localhost:8090/javaTraining/Login.html?q='+loginrequest;
+	location.href=url;
+}
 $(document).ready(function() {
+	load();
 	// ログインボタンを押したときのイベント
 	$('.addnew').click(addnew);
 	$('#search').click(Search);
 	$('#refresh').click(refresh);
 	$('#toAp').click(toAp);
 	getEmpInfo();
+	$('#logout').click(logout);
 });
