@@ -145,6 +145,7 @@ var load=function(){
 				$('#ChangePassword').click(ChangePassword);
 				EmpRole=json.EmpRole;
 				EmpidforSetting=json.EmpId;
+				getApInfo();
 				if(json.EmpRole === "R01"){
 					$('#LoginEmpName').append('　管理者');
 				}
@@ -165,7 +166,7 @@ $(document).ready(function() {
 	load();
 	// ログインボタンを押したときのイベント
 	$('.addnew').click(addnew);
-	getApInfo();
+
 	$('#toEmpList').click(toEmpList);
 	$('#toLogin').click(toLogin);
 	$('#toAp').click(toAp);

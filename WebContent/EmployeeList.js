@@ -156,6 +156,7 @@ var load=function(){
 		url : '/javaTraining/LoginCertificationServlet',
 		success : function(json) {
 			if(json.result === "true"){
+				getEmpInfo();
 				EmpRole=json.EmpRole;
 				$('#loginChange').html('<button id=logout type="button">ログアウト</button>');
 				$('#logout').click(logout);
@@ -195,7 +196,7 @@ $(document).ready(function() {
 	$('.addnew').click(addnew);
 	$('#search').click(Search);
 	$('#toAp').click(toAp);
-	getEmpInfo();
+
 	$('#toEmpList').click(toEmpList);
 	$('#toLogin').click(toLogin);
 });
