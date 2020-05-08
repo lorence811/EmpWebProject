@@ -38,6 +38,14 @@ public class ExpenseChangeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String Id= request.getParameter("Id");
 		connectToDB();
+		String sql = creatSql(Id);
+		Expanse expanse = new Expanse();
+		getApInfoFromDB(sql, expanse);
+		PrintWriter pw = response.getWriter();
+		pw.append(new ObjectMapper().writeValueAsString(expanse));
+	}
+
+	private String creatSql(String Id) {
 		String sql = "select  \n" +
 				"* \n" +
 				"from \n" +
@@ -45,10 +53,7 @@ public class ExpenseChangeServlet extends HttpServlet {
 				" \n" +
 				"where 1=1 \n" +
 				"and ID = '"+Id+"' \n";
-		Expanse expanse = new Expanse();
-		getApInfoFromDB(sql, expanse);
-		PrintWriter pw = response.getWriter();
-		pw.append(new ObjectMapper().writeValueAsString(expanse));
+		return sql;
 	}
 	private void getApInfoFromDB(String sql, Expanse expanse) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";

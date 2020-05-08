@@ -78,8 +78,8 @@ var getApInfo = function(){
 						tableElemnt += '<tr>';
 						tableElemnt += '<td class=empID>'+Ap.apId+'</td>';
 						tableElemnt += '<td class=empName>'+Ap.apName+'</td>';
-						tableElemnt += '<td class=changebuttoncontainer style="width: 43px;" ><button class=change type="submit" name="delete" value="'+Ap.apId+'">編集</button></td>';
-						tableElemnt += '<td class=changebuttoncontainer style="width: 43px;" ><button class=delete type="submit" name="delete" value="'+Ap.apId+'">削除</button></td>';
+						tableElemnt += '<td class=changebuttoncontainer style="width: 50px;" ><button class=change type="submit" name="delete" value="'+Ap.apId+'">編集</button></td>';
+						tableElemnt += '<td class=changebuttoncontainer style="width: 50px;" ><button class=delete type="submit" name="delete" value="'+Ap.apId+'">削除</button></td>';
 						tableElemnt += '</tr>';
 					}
 				}

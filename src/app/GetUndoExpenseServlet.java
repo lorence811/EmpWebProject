@@ -38,6 +38,14 @@ public class GetUndoExpenseServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		connectToDB();
+		String sql = creatSql();
+		List<Expanse> ExpanseList = new ArrayList<>();
+		getApInfoFromDB(sql, ExpanseList);
+		PrintWriter pw = response.getWriter();
+		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
+	}
+
+	private String creatSql() {
 		String sql= "select \n" +
 				"* \n" +
 				"from \n" +
@@ -48,10 +56,7 @@ public class GetUndoExpenseServlet extends HttpServlet {
 				" \n" +
 				"order by \n" +
 				"ID \n";
-		List<Expanse> ExpanseList = new ArrayList<>();
-		getApInfoFromDB(sql, ExpanseList);
-		PrintWriter pw = response.getWriter();
-		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
+		return sql;
 	}
 	private void getApInfoFromDB(String sql, List<Expanse> ExpanseList) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";

@@ -42,6 +42,15 @@ public class ExpenseGetinfoServlet extends HttpServlet {
 		String EmpName = (String) session.getAttribute("EmpName");
 		connectToDB();
 
+		String sql = creatSql(EmpName);
+		List<Expanse> ExpanseList = new ArrayList<>();
+		getApInfoFromDB(sql, ExpanseList);
+		PrintWriter pw = response.getWriter();
+		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
+
+	}
+
+	private String creatSql(String EmpName) {
 		String sql = "select \n" +
 				"* \n" +
 				" \n" +
@@ -50,11 +59,7 @@ public class ExpenseGetinfoServlet extends HttpServlet {
 				" \n" +
 				"where 1=1 \n" +
 				"and CLAIMRNAME = '"+EmpName+"' \n";
-		List<Expanse> ExpanseList = new ArrayList<>();
-		getApInfoFromDB(sql, ExpanseList);
-		PrintWriter pw = response.getWriter();
-		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
-
+		return sql;
 	}
 	private void getApInfoFromDB(String sql, List<Expanse> ExpanseList) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";

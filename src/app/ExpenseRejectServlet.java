@@ -48,18 +48,23 @@ public class ExpenseRejectServlet extends HttpServlet {
 		String updateDate = request.getParameter("updateDate");
 		String reason = request.getParameter("reason");
 
-		String sql="update EXPENSE \n" +
-				"set STATUS = '却下', \n" +
-				"	UPDATEDATE = '"+updateDate+"', \n" +
-				"	UPDATENAME = '"+updateName+"', \n" +
-				"	REASON = '"+reason+"' \n" +
-				"where ID = '"+Id+"' \n";
+		String sql = creatSql(updateName, Id, updateDate, reason);
 		connectToDB();
 		doUpdateBySql(sql);
 		// アクセスした人に応答するためのJSONを用意する
 		PrintWriter pw = response.getWriter();
 		// JSONで出力する
 		pw.append(new ObjectMapper().writeValueAsString("ok"));
+	}
+
+	private String creatSql(String updateName, String Id, String updateDate, String reason) {
+		String sql="update EXPENSE \n" +
+				"set STATUS = '却下', \n" +
+				"	UPDATEDATE = '"+updateDate+"', \n" +
+				"	UPDATENAME = '"+updateName+"', \n" +
+				"	REASON = '"+reason+"' \n" +
+				"where ID = '"+Id+"' \n";
+		return sql;
 	}
 	private void connectToDB() {
 		// JDBCドライバの準備

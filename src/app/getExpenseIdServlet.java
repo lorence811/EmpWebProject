@@ -22,13 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Servlet implementation class getExpenseIdServlet
  */
 @WebServlet("/getExpenseIdServlet")
-public class getExpenseIdServlet extends HttpServlet {
+public class GetExpenseIdServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public getExpenseIdServlet() {
+    public GetExpenseIdServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -38,6 +38,14 @@ public class getExpenseIdServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		connectToDB();
+		String sql = creatSql();
+		List<Expanse> ExpanseList = new ArrayList<>();
+		getApInfoFromDB(sql, ExpanseList);
+		PrintWriter pw = response.getWriter();
+		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
+	}
+
+	private String creatSql() {
 		String sql= "select \n" +
 				"* \n" +
 				"from \n" +
@@ -45,10 +53,7 @@ public class getExpenseIdServlet extends HttpServlet {
 				" \n" +
 				"order by \n" +
 				"ID \n";
-		List<Expanse> ExpanseList = new ArrayList<>();
-		getApInfoFromDB(sql, ExpanseList);
-		PrintWriter pw = response.getWriter();
-		pw.append(new ObjectMapper().writeValueAsString(ExpanseList));
+		return sql;
 	}
 	private void getApInfoFromDB(String sql, List<Expanse> ExpanseList) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";

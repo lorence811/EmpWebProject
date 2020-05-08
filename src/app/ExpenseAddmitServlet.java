@@ -19,13 +19,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Servlet implementation class addmitServlet
  */
 @WebServlet("/addmitServlet")
-public class addmitServlet extends HttpServlet {
+public class ExpenseAddmitServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public addmitServlet() {
+    public ExpenseAddmitServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -47,17 +47,22 @@ public class addmitServlet extends HttpServlet {
 		String Id= request.getParameter("Id");
 		String updateDate = request.getParameter("updateDate");
 
-		String sql="update EXPENSE \n" +
-				"set STATUS = '承認済', \n" +
-				"	UPDATEDATE = '"+updateDate+"', \n" +
-				"	UPDATENAME = '"+updateName+"' \n" +
-				"where ID = '"+Id+"'";
+		String sql = creatSql(updateName, Id, updateDate);
 		connectToDB();
 		doUpdateBySql(sql);
 		// アクセスした人に応答するためのJSONを用意する
 		PrintWriter pw = response.getWriter();
 		// JSONで出力する
 		pw.append(new ObjectMapper().writeValueAsString("ok"));
+	}
+
+	private String creatSql(String updateName, String Id, String updateDate) {
+		String sql="update EXPENSE \n" +
+				"set STATUS = '承認済', \n" +
+				"	UPDATEDATE = '"+updateDate+"', \n" +
+				"	UPDATENAME = '"+updateName+"' \n" +
+				"where ID = '"+Id+"'";
+		return sql;
 	}
 	private void connectToDB() {
 		// JDBCドライバの準備

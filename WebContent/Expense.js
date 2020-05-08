@@ -148,7 +148,7 @@ var getMasterinfo = function(){
 						tableElemnt +='<td><button class=reject type="submit" name="delete" value="'+expanse.id+'">却下</button></td>';
 
 					}
-					$('#masterH1').html("判断待ちの申請一覧");
+					$('#masterH1').html("判断待ちの申請一覧:");
 					$('#mastertable').html(tableElemnt);
 					$('.detail').click(detail);
 					$('.addmit').click(addmit);
