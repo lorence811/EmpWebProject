@@ -66,8 +66,9 @@ var load=function(){
 var changepassword = function(){
 	var inputPassword = $('#Password').val();
 	var inputRepassword = $('#rePassword').val();
-
-	if(inputPassword === inputRepassword){
+	if(inputPassword === ""){
+		alert('パスワードを入力してください。');
+	}else if(inputPassword === inputRepassword){
 		var requestQuery = {
 				password : inputPassword,
 			};
