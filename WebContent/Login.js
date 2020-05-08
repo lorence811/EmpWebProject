@@ -71,14 +71,13 @@ var load=function(){
 		}
 	});
 }
-var logout=function(){
-	loginrequest="logout";
-	var url = 'http://localhost:8090/javaTraining/Login.html?q='+loginrequest;
+var regist = function(){
+	var url = 'http://localhost:8090/javaTraining/EmpAddNew.html'
 	location.href=url;
 }
 $(document).ready(function() {
 	load();
 	// ログインボタンを押したときのイベント
 	$('#commit').click(login);
-	$('#logout').click(logout);
+	$('#regist').click(regist);
 });

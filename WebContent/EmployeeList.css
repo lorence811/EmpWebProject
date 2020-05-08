@@ -24,6 +24,24 @@ html, body {
 	background-color : blue;
 	text-align : center;
 }
+#mastertablecontainer{
+	width: 300px;
+	border : solid  1px gray;
+}
+#mastertable{
+	width : 100%;
+}
+#mastertablecontainer td{
+	padding : 3px;
+	border : solid  1px gray;
+	text-align : center;
+}
+#mastertablecontainer th{
+	padding : 3px;
+	border : solid  1px gray;
+	background-color : blue;
+	text-align : center;
+}
 #buttonContainer{
 	margin-top: 5px;
 	width: 80px;
@@ -44,11 +62,38 @@ html, body {
 	margin-top: 5px;
 	width:150px;
 }
-#toAp{
-	margin-top: 5px;
-	width:150px;
+
+#header{
+	height:40px;
+	width: 700px;
+	float: left;
+	border : solid  1px gray;
 }
-#logout	{
-	margin-top: 5px;
-	width:150px;
+.headermenu{
+	float: right;
+	margin: 7px;
+}
+#loginChange{
+	float: right;
+	margin: 7px;
+}
+#contentcontainer{
+	clear:left;
+}
+#LoginEmpName{
+	margin: 7px;
+}
+#input{
+	width: 320px;
+	float: left;
+}
+#input2{
+	width: 320px;
+	clear: left;
+}
+.addmit{
+	background-color: green;
+}
+.reject{
+	background-color: red;
 }

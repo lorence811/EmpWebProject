@@ -111,6 +111,7 @@ public class EmpLoginServlet extends HttpServlet {
 					responseData.put("result", "ok");
 					session.setAttribute("EmpName", rs1.getString("EMPNAME"));
 					session.setAttribute("EmpRole", rs1.getString("EMPROLE"));
+					session.setAttribute("EmpId", rs1.getString("EMPID"));
 				}else{
 					responseData.put("result", "ng");
 
@@ -155,8 +156,8 @@ public class EmpLoginServlet extends HttpServlet {
 				"and l.EMPID =?";
 
 	    PreparedStatement stmt = con.prepareStatement(sql);
-	    stmt.setString(1, userId);
-	    stmt.setString(2, password);
+	    stmt.setString(1, password);
+	    stmt.setString(2, userId);
 
 
 	    return stmt;

@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>部署データベース管理ページ</title>
-<link rel="stylesheet" href="./ApList.css" type="text/css">
+<title>予算申請管理</title>
+<link rel="stylesheet" href="./EmployeeList.css" type="text/css">
 <script type="text/javascript" src="jquery-1.10.2.js"></script>
-<script type="text/javascript" src="./ApList.js"></script>
+<script type="text/javascript" src="./Expense.js"></script>
 </head>
 <body>
+<body id=body>
 	<div id=header>
 		<div id=loginChange><button id=toLogin type="button">ログイン</button></div>
 		<div class=headermenu><button id=toAp type="button">部署管理</button></div>
@@ -15,19 +16,33 @@
 	</div>
 	<div id=contentcontainer>
 		<div>
-			<h1>部署一覧:</h1>
+			<h1>自身の申請一覧:</h1>
 		</div>
 		<div id=content>
 			<div id=nullcontainer>
-				<div id=tablecontainer>
+				<div id=tablecontainer style="width: 450px;">
 					<table id= table>
 					</table>
 				</div>
 			</div>
 			<div id= buttonContainer>
-				<div id=roleSetting><button class=addnew type="button">新規追加</button></div>
+				<div id=roleSetting><button id=addnew type="button">申請追加</button></div>
+			</div>
+		</div>
+		<div  id=mastercontent>
+			<div>
+				<h1 id=masterH1></h1>
+			</div>
+			<div id=mastercontent>
+				<div id=masternullcontainer>
+					<div id=mastertablecontainer style="width:800px;">
+						<table id= mastertable>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+</body>
 </body>
 </html>

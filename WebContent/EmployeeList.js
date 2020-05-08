@@ -1,12 +1,16 @@
 /**
  *
  */
-var refresh= function(){
+var toEmpList= function(){
 	var url = 'http://localhost:8090/javaTraining/EmployeeList.html';
 	// 画面遷移
 	location.href=url;
 }
-
+var toLogin= function(){
+	var url = 'http://localhost:8090/javaTraining/Login.html';
+	// 画面遷移
+	location.href=url;
+}
 var addnew = function(){
 
 	var url = 'http://localhost:8090/javaTraining/EmpAddNew.html';
@@ -21,6 +25,16 @@ var Search = function(){
 }
 var toAp = function(){
 	var url = 'http://localhost:8090/javaTraining/ApList.html';
+	// 画面遷移
+	location.href=url;
+}
+var toExpense = function(){
+	var url = 'http://localhost:8090/javaTraining/Expense.html';
+	// 画面遷移
+	location.href=url;
+}
+var ChangePassword = function(){
+	var url = 'http://localhost:8090/javaTraining/ChangePassword.html';
 	// 画面遷移
 	location.href=url;
 }
@@ -62,15 +76,30 @@ var getEmpInfo = function(){
 				var EmpLast = json[json.length - 1];
 				LastEmpId = EmpLast.empId;
 				localStorage.setItem('LastEmpId',LastEmpId);
+				if(EmpRole === "R02"){
+					for (var i=0; i < json.length; i++) {
+						var Emp = json[i];
+						tableElemnt += '<tr>';
+						tableElemnt += '<td class=empID>'+Emp.empId+'</td>';
+						tableElemnt += '<td class=empName>'+Emp.empName+'</td>';
+						if(Emp.empId === EmpidforSetting){
+							tableElemnt += '<td class = '+Emp.empId+'><button class=change type="submit" name="delete" value="'+Emp.empId+'">編集</button></td>';
+							tableElemnt += '<td class = '+Emp.empId+'><button class=delete type="submit" name="delete" value="'+Emp.empId+'">削除</button></td>';
+						}
+					}
 
-				for (var i=0; i < json.length; i++) {
-					var Emp = json[i];
-					tableElemnt += '<tr>';
-					tableElemnt += '<td class=empID>'+Emp.empId+'</td>';
-					tableElemnt += '<td class=empName>'+Emp.empName+'</td>';
-					tableElemnt += '<td><button class=change type="submit" name="delete" value="'+Emp.empId+'">編集</button></td>';
-					tableElemnt += '<td><button class=delete type="submit" name="delete" value="'+Emp.empId+'">削除</button></td>';
-					tableElemnt += '</tr>';
+				}else{
+
+					for (var i=0; i < json.length; i++) {
+						var Emp = json[i];
+						tableElemnt += '<tr>';
+						tableElemnt += '<td class=empID>'+Emp.empId+'</td>';
+						tableElemnt += '<td class=empName>'+Emp.empName+'</td>';
+						tableElemnt += '<td class = '+Emp.empId+'><button class=change type="submit" name="delete" value="'+Emp.empId+'">編集</button></td>';
+						tableElemnt += '<td class = '+Emp.empId+'><button class=delete type="submit" name="delete" value="'+Emp.empId+'">削除</button></td>';
+						tableElemnt += '</tr>';
+				}
+
 					}
 				$('#table').html(tableElemnt);
 			}else if(json.length == 0){
@@ -107,7 +136,7 @@ var deleteEmp = function(){
 			// 確認のために返却値を出力
 			console.log('返却値', json);
 			alert('データの削除に成功しました。');
-			refresh();
+			toEmpList();
 		},
 		error:function(XMLHttpRequest, textStatus, errorThrown){
 			// サーバーとの通信に失敗した時の処理
@@ -116,6 +145,9 @@ var deleteEmp = function(){
 		}
 	});
 }
+
+var EmpidforSetting="";
+var EmpRole="";
 var load=function(){
 
 	$.ajax({
@@ -124,12 +156,25 @@ var load=function(){
 		url : '/javaTraining/LoginCertificationServlet',
 		success : function(json) {
 			if(json.result === "true"){
-				$('#loginCert').html(json.EmpName+"さん、ようこそ。");
+				EmpRole=json.EmpRole;
+				$('#loginChange').html('<button id=logout type="button">ログアウト</button>');
+				$('#logout').click(logout);
+				$('#header').append('<div class=headermenu><button id=ChangePassword  type="button">パスワード変更</button></div>');
+				$('#header').append('<div class=headermenu><button id=Expense  type="button">支払申請管理</button></div>');
+				$('#header').append('<p id=LoginEmpName>'+json.EmpName+'さん</p>');
+				$('#Expense').click(toExpense);
+				$('#ChangePassword').click(ChangePassword);
+				if(json.EmpRole === "R02"){
+					EmpidforSetting=json.EmpId;
+					$('#roleSetting').html("");
+				}else if(json.EmpRole === "R01"){
+					$('#LoginEmpName').append('　管理者');
+				}
+
 			}else{
 				var tableElemnt = '';
 				tableElemnt += '<h1>ログインしてください。</h1>';
-				tableElemnt += '<a href="http://localhost:8090/javaTraining/Login.html" target="_blank">ログイン画面へ</a>';
-				$('#body').html(tableElemnt);
+				$('#contentcontainer').html(tableElemnt);
 			}
 		},
 		error:function(XMLHttpRequest, textStatus, errorThrown){
@@ -149,8 +194,8 @@ $(document).ready(function() {
 	// ログインボタンを押したときのイベント
 	$('.addnew').click(addnew);
 	$('#search').click(Search);
-	$('#refresh').click(refresh);
 	$('#toAp').click(toAp);
 	getEmpInfo();
-	$('#logout').click(logout);
+	$('#toEmpList').click(toEmpList);
+	$('#toLogin').click(toLogin);
 });

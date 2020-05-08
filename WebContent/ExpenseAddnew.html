@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>予算申請管理(新規)</title>
+<link rel="stylesheet" href="./Empchange.css" type="text/css">
+<script type="text/javascript" src="jquery-1.10.2.js"></script>
+<script type="text/javascript" src="./ExpenseAddnew.js"></script>
+</head>
+<body>
+	<div id = form>
+		<div class = input>
+			<p>ID:<p>
+			<input type="text"id=ID value="" readonly>
+		</div>
+		<div class = input>
+			<p>申請日:<p>
+			<input type="text"id=claimedDate value="" readonly>
+		</div>
+		<div class = input>
+			<p>タイトル:<p>
+			<input type="text"id=title value="">
+		</div>
+		<div class = input>
+			<p>支払先:<p>
+			<input type="text"id=destination value="">
+		</div>
+		<div class = input>
+			<p>金額:<p>
+			<input type="text" id=amount value="">
+		</div>
+		<div id=buttons>
+			<button id=commit type="button">追加</button>
+			<button id=cancel type="button">キャンセル</button>
+		</div >
+	</div>
+</body>
+</html>

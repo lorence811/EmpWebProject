@@ -11,20 +11,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Servlet implementation class EmpAddNewServlet
+ * Servlet implementation class addmitServlet
  */
-@WebServlet("/EmpAddNewServlet")
-public class EmpAddNewServlet extends HttpServlet {
+@WebServlet("/addmitServlet")
+public class addmitServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public EmpAddNewServlet() {
+    public addmitServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -40,37 +41,37 @@ public class EmpAddNewServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String EmpId= request.getParameter("EmpId");
+		HttpSession session = request.getSession(true);
+		String updateName = (String) session.getAttribute("EmpName");
 
-		String EmpName = request.getParameter("EmpName");
+		String Id= request.getParameter("Id");
+		String updateDate = request.getParameter("updateDate");
 
-		String EmpAge = request.getParameter("EmpAge");
-
-		String EmpGender = request.getParameter("EmpGender");
-
-		String EmpAddress = request.getParameter("EmpAddress");
-
-		String EmpApId = request.getParameter("EmpApId");
-
-		String Password = request.getParameter("Password");
-
-		String sql = creatInsertSql(EmpId, EmpName, EmpAge, EmpGender, EmpAddress, EmpApId);
-
-		String sql2 = "insert into LOGININFO(EMPID, PASSWORD, EMPROLE)values('"+EmpId+"','"+Password+"','R02') \n";
-
-		connectToDb();
-
-		doInsertSql(sql);
-		doInsertSql(sql2);
-
+		String sql="update EXPENSE \n" +
+				"set STATUS = '承認済', \n" +
+				"	UPDATEDATE = '"+updateDate+"', \n" +
+				"	UPDATENAME = '"+updateName+"' \n" +
+				"where ID = '"+Id+"'";
+		connectToDB();
+		doUpdateBySql(sql);
 		// アクセスした人に応答するためのJSONを用意する
 		PrintWriter pw = response.getWriter();
 		// JSONで出力する
 		pw.append(new ObjectMapper().writeValueAsString("ok"));
 	}
+	private void connectToDB() {
+		// JDBCドライバの準備
+		try {
 
-	private void doInsertSql(String sql) {
-		// データベースにアクセスするために、データベースのURLとユーザ名とパスワードを指定
+		    // JDBCドライバのロード
+		    Class.forName("oracle.jdbc.driver.OracleDriver");
+
+		} catch (ClassNotFoundException e) {
+		    // ドライバが設定されていない場合はエラーになります
+		    throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
+		}
+	}
+	private void doUpdateBySql(String sql) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		String user = "webapp";
 		String pass = "webapp";
@@ -88,25 +89,6 @@ public class EmpAddNewServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
 		}
-	}
-
-	private void connectToDb() {
-		// JDBCドライバの準備
-		try {
-			// JDBCドライバのロード
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-		} catch (ClassNotFoundException e) {
-			// ドライバが設定されていない場合はエラーになります
-			throw new RuntimeException(String.format("JDBCドライバのロードに失敗しました。詳細:[%s]", e.getMessage()), e);
-		}
-	}
-
-	private String creatInsertSql(String EmpId, String EmpName, String EmpAge, String EmpGender, String EmpAddress,
-			String EmpApId) {
-		// 実行するSQL文
-		String sql = "insert into EMPINFO(EMPID, EMPAGE, EMPGENDER, EMPADDRESS, EMPAPID, \n" +
-				"	EMPNAME)values('"+EmpId+"','"+EmpAge+"','"+EmpGender+"','"+EmpAddress+"','"+EmpApId+"','"+EmpName+"') \n" ;
-		return sql;
 	}
 
 }

@@ -46,6 +46,7 @@ public class LoginCertificationServlet extends HttpServlet {
 			responseData.put("result", "true");
 			responseData.put("EmpName", (String) session.getAttribute("EmpName"));
 			responseData.put("EmpRole", (String) session.getAttribute("EmpRole"));
+			responseData.put("EmpId", (String) session.getAttribute("EmpId"));
 			pw.append(new ObjectMapper().writeValueAsString(responseData));
 		}
 	}

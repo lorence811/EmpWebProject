@@ -16,6 +16,7 @@ p{
 .input{
 	width: 380px;
 	float: left;
+	height : 50px;
 }
 #EmpGender{
 	float: left;
