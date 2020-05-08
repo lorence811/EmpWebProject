@@ -40,7 +40,7 @@ public class ExpenseChangeServlet extends HttpServlet {
 		connectToDB();
 		String sql = creatSql(Id);
 		Expanse expanse = new Expanse();
-		getApInfoFromDB(sql, expanse);
+		getExpenseInfoFromDB(sql, expanse);
 		PrintWriter pw = response.getWriter();
 		pw.append(new ObjectMapper().writeValueAsString(expanse));
 	}
@@ -55,7 +55,7 @@ public class ExpenseChangeServlet extends HttpServlet {
 				"and ID = '"+Id+"' \n";
 		return sql;
 	}
-	private void getApInfoFromDB(String sql, Expanse expanse) {
+	private void getExpenseInfoFromDB(String sql, Expanse expanse) {
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		String user = "webapp";
 		String pass = "webapp";
@@ -144,7 +144,7 @@ public class ExpenseChangeServlet extends HttpServlet {
 				Statement stmt = con.createStatement();
 			) {
 			// SQLの命令文を実行し、その件数をint型のresultCountに代入します
-			int resultCount = stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql);
 
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);

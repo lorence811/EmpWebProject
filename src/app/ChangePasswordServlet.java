@@ -85,7 +85,7 @@ public class ChangePasswordServlet extends HttpServlet {
 				Statement stmt = con.createStatement();
 			) {
 			// SQLの命令文を実行し、その件数をint型のresultCountに代入します
-			int resultCount = stmt.executeUpdate(sql);
+			stmt.executeUpdate(sql);
 
 		} catch (Exception e) {
 			throw new RuntimeException(String.format("検索処理の実施中にエラーが発生しました。詳細：[%s]", e.getMessage()), e);
