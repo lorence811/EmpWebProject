@@ -155,12 +155,12 @@ var getMasterinfo = function(){
 					$('.reject').click(reject);
 
 			}else if(json.length == 0){
-				$('#masternullcontainer').html('登録している申請がありません。');
+				$('#masternullcontainer').html('判断待ちの申請がありません。');
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			alert('データベースの接続に失敗しました');
-			$('#masternullcontainer').html('登録している申請がありません。');
+			$('#masternullcontainer').html('判断待ちの申請がありません。');
 			console.log(errorThrown)
 		}
 	});
@@ -200,40 +200,46 @@ var addmit = function(){
 	});
 }
 var reject = function(){
+
 	var inputId = document.activeElement.value;
 	var inputReason = document.getElementById(inputId).value;
-	var now = new Date();
-	var year = now.getFullYear();
-	var mon = now.getMonth()+1; //１を足すこと
-	var day = now.getDate();
-	var s = year + "-" + mon + "-" + day
-	var inputclaimedDate = s;
-	var requestQuery = {
-			Id : inputId,
-			updateDate : s,
-			reason : inputReason,
-	}
-	console.log('requestQuery',requestQuery);
-
-	// サーバーにデータを送信する。
-	$.ajax({
-		type : 'POST',
-		dataType:'json',
-		url : '/javaTraining/ExpenseRejectServlet',
-		data : requestQuery,
-		success : function(json) {
-			// サーバーとの通信に成功した時の処理
-			// 確認のために返却値を出力
-			console.log('返却値', json);
-			alert('却下しました。');
-			toExpense();
-		},
-		error:function(XMLHttpRequest, textStatus, errorThrown){
-			// サーバーとの通信に失敗した時の処理
-			alert('処理することができませんでした。');
-			console.log(errorThrown)
+	if(inputReason === ""){
+		alert("却下理由を入力してください。")
+	}else{
+		var now = new Date();
+		var year = now.getFullYear();
+		var mon = now.getMonth()+1; //１を足すこと
+		var day = now.getDate();
+		var s = year + "-" + mon + "-" + day
+		var inputclaimedDate = s;
+		var requestQuery = {
+				Id : inputId,
+				updateDate : s,
+				reason : inputReason,
 		}
-	});
+		console.log('requestQuery',requestQuery);
+
+		// サーバーにデータを送信する。
+		$.ajax({
+			type : 'POST',
+			dataType:'json',
+			url : '/javaTraining/ExpenseRejectServlet',
+			data : requestQuery,
+			success : function(json) {
+				// サーバーとの通信に成功した時の処理
+				// 確認のために返却値を出力
+				console.log('返却値', json);
+				alert('却下しました。');
+				toExpense();
+			},
+			error:function(XMLHttpRequest, textStatus, errorThrown){
+				// サーバーとの通信に失敗した時の処理
+				alert('処理することができませんでした。');
+				console.log(errorThrown)
+			}
+		});
+	}
+
 }
 
 $(document).ready(function() {
